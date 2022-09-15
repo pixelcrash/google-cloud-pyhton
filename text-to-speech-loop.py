@@ -11,7 +11,8 @@ def run_quickstart():
     synthesis_input = texttospeech.SynthesisInput(text="Mit Goethes Faust wird Johann Wolfgang von Goethes Bearbeitung des Fauststoffs bezeichnet. Der Begriff kann sich auf den ersten Teil der von Goethe geschaffenen Tragödie, auf deren ersten und zweiten Teil gemeinsam oder insgesamt auf die Arbeiten am Fauststoff beziehen, die Goethe durch sechzig Jahre hindurch immer wieder neu aufnahm. Er umfasst in diesem letzteren Sinne auch die Entwürfe, Fragmente, Kommentare und Paralipomena des Dichters zu seinem Faustwerk und zum Fauststoff.")
 
     voice = texttospeech.VoiceSelectionParams(
-        language_code="de-DE", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+        #language_code="de-DE", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+        name="de-DE-Standard-A"
     )
 
     audio_config = texttospeech.AudioConfig(
