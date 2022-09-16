@@ -1,32 +1,44 @@
-#!/usr/bin/env python
+from google.cloud import texttospeech
+import glob
 
-# create a loop to loop all the txt files !! 
 
-def run_quickstart():
+client = texttospeech.TextToSpeechClient()
+
+#slogans = glob.glob('./generated-txt/20220916_all_slogans_utf8.txt')
+slogans = open("./generated-txt/20220916_all_slogans_utf8.txt",'r')
+count = 1
+
+uevoices = ['de-DE-Standard-A', 'de-DE-Standard-B', 'de-DE-Standard-C', 'de-DE-Standard-D', 'de-DE-Standard-E', 'de-DE-Standard-F']
+
+while True:
+    next_line = slogans.readline()
+    if not next_line:
+        break;
     
-    from google.cloud import texttospeech
-
-    client = texttospeech.TextToSpeechClient()
-
-    synthesis_input = texttospeech.SynthesisInput(text="Mit Goethes Faust wird Johann Wolfgang von Goethes Bearbeitung des Fauststoffs bezeichnet. Der Begriff kann sich auf den ersten Teil der von Goethe geschaffenen Tragödie, auf deren ersten und zweiten Teil gemeinsam oder insgesamt auf die Arbeiten am Fauststoff beziehen, die Goethe durch sechzig Jahre hindurch immer wieder neu aufnahm. Er umfasst in diesem letzteren Sinne auch die Entwürfe, Fragmente, Kommentare und Paralipomena des Dichters zu seinem Faustwerk und zum Fauststoff.")
-
-    voice = texttospeech.VoiceSelectionParams(
-        #language_code="de-DE", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
-        name="de-DE-Standard-A"
-    )
-
-    audio_config = texttospeech.AudioConfig(
-        audio_encoding=texttospeech.AudioEncoding.MP3
-    )
-
-    response = client.synthesize_speech(
-        input=synthesis_input, voice=voice, audio_config=audio_config
-    )
-
-    with open("output.mp3", "wb") as out:
-        out.write(response.audio_content)
-        print('Audio content written to file "output.mp3"')
-
-
-if __name__ == "__main__":
-    run_quickstart()
+    filename = "./generated-txt/slogans/{0}.txt".format(count)    
+    with open(filename, 'w') as f:
+        f.write(next_line.strip())
+        
+    #make audio
+        for x in uevoices:
+            speak = next_line.strip()
+            synthesis_input = texttospeech.SynthesisInput(text=speak)
+            
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="de-DE", name=x)
+            
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.MP3)
+                
+            response = client.synthesize_speech(
+                input=synthesis_input, voice=voice, audio_config=audio_config)
+                
+            outputfile = "./mp3/{0}/{1}.mp3".format(x, count)
+            
+            with open(outputfile, "wb") as out:
+                out.write(response.audio_content)
+                print("{0}: made file {1}".format(count, outputfile))
+            
+                 
+    count = count + 1
+slogans.close()
